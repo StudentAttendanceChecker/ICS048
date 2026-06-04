@@ -23,6 +23,26 @@ $today = date('Y-m-d');
 $saved = false;
 $error = '';
 
+// Update student
+if (isset($_POST['update_student'])) {
+    $sid        = $conn->real_escape_string(trim($_POST['edit_student_id']));
+    $first_name = $conn->real_escape_string(trim($_POST['edit_first_name']));
+    $last_name  = $conn->real_escape_string(trim($_POST['edit_last_name']));
+    $sex        = $conn->real_escape_string($_POST['edit_sex']);
+    $conn->query("UPDATE students SET first_name='$first_name', last_name='$last_name', sex='$sex' WHERE student_id='$sid'");
+    header("Location: course_students.php?course_id=$course_id");
+    exit();
+}
+
+// Delete student from course
+if (isset($_POST['delete_student'])) {
+    $sid = $conn->real_escape_string(trim($_POST['delete_student_id']));
+    $conn->query("DELETE FROM student_courses WHERE student_id='$sid' AND course_id=$course_id");
+    $conn->query("DELETE FROM attendance WHERE student_id='$sid' AND course_id=$course_id");
+    header("Location: course_students.php?course_id=$course_id");
+    exit();
+}
+
 // Add student directly from this page
 if (isset($_POST['add_student'])) {
     $student_id = trim($_POST['student_id']);
@@ -93,7 +113,7 @@ if ($att_result) {
     </div>
 
     <?php if ($saved): ?>
-        <div class="alert-success">✓ Attendance saved for <?= date('F j, Y', strtotime($selected_date)); ?>.</div>
+        <div class="alert-success">Attendance saved for <?= date('F j, Y', strtotime($selected_date)); ?>.</div>
     <?php endif; ?>
 
     <div class="content">
@@ -158,6 +178,7 @@ if ($att_result) {
                             <th>Name</th>
                             <th>Sex</th>
                             <th>Attendance</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -166,12 +187,16 @@ if ($att_result) {
                             while ($student = $students->fetch_assoc()):
                                 $sid     = $student['student_id'];
                                 $current = $attendance_map[$sid] ?? 'Present';
+                                $fn      = htmlspecialchars($student['first_name']);
+                                $ln      = htmlspecialchars($student['last_name']);
+                                $sx      = htmlspecialchars($student['sex']);
                         ?>
-                        <tr>
+                        <!-- Normal row -->
+                        <tr id="row-<?= $sid ?>">
                             <td><?= $i++; ?></td>
                             <td><?= htmlspecialchars($sid); ?></td>
-                            <td><?= htmlspecialchars($student['last_name'] . ', ' . $student['first_name']); ?></td>
-                            <td><?= htmlspecialchars($student['sex']); ?></td>
+                            <td><?= $ln . ', ' . $fn; ?></td>
+                            <td><?= $sx; ?></td>
                             <td>
                                 <select name="status[<?= $sid; ?>]" style="margin:0; padding:6px 10px; font-size:13px; width:auto;">
                                     <option value="Present" <?= $current === 'Present' ? 'selected' : ''; ?>>Present</option>
@@ -179,11 +204,44 @@ if ($att_result) {
                                     <option value="Late"    <?= $current === 'Late'    ? 'selected' : ''; ?>>Late</option>
                                 </select>
                             </td>
+                            <td style="white-space:nowrap;">
+                                <button type="button" class="btn-edit-sm" style="background:#f39c12; margin-right:4px;" onclick="toggleEdit('<?= $sid ?>')">Edit</button>
+                                <button type="button" class="btn-edit-sm" style="background:#e74c3c;" onclick="deleteStudent('<?= $sid ?>', '<?= $ln ?>, <?= $fn ?>')">Delete</button>
+                            </td>
+                        </tr>
+                        <!-- Inline edit row -->
+                        <tr id="edit-row-<?= $sid ?>" class="hidden" style="background:#fffbea;">
+                            <td colspan="6">
+                                <form method="post" action="course_students.php?course_id=<?= $course_id ?>">
+                                    <input type="hidden" name="edit_student_id" value="<?= htmlspecialchars($sid) ?>">
+                                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; padding:6px 0;">
+                                        <div style="flex:1; min-width:130px;">
+                                            <label style="font-size:12px;">First Name</label>
+                                            <input type="text" name="edit_first_name" value="<?= $fn ?>" required style="margin:0;">
+                                        </div>
+                                        <div style="flex:1; min-width:130px;">
+                                            <label style="font-size:12px;">Last Name</label>
+                                            <input type="text" name="edit_last_name" value="<?= $ln ?>" required style="margin:0;">
+                                        </div>
+                                        <div style="min-width:110px;">
+                                            <label style="font-size:12px;">Sex</label>
+                                            <select name="edit_sex" required style="margin:0;">
+                                                <option value="Male" <?= $sx === 'Male' ? 'selected' : '' ?>>Male</option>
+                                                <option value="Female" <?= $sx === 'Female' ? 'selected' : '' ?>>Female</option>
+                                            </select>
+                                        </div>
+                                        <div style="display:flex; gap:6px;">
+                                            <button type="submit" name="update_student" style="width:auto; padding:10px 16px; margin:0; background:#27ae60;">Save</button>
+                                            <button type="button" style="width:auto; padding:10px 16px; margin:0; background:#aaa;" onclick="toggleEdit('<?= $sid ?>')">Cancel</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
                         </tr>
                         <?php endwhile; ?>
                         <?php else: ?>
                         <tr>
-                            <td colspan="5" style="text-align:center; color:#888;">No students yet. Click "+ Add Student" to add one.</td>
+                            <td colspan="6" style="text-align:center; color:#888;">No students yet. Click "+ Add Student" to add one.</td>
                         </tr>
                         <?php endif; ?>
                     </tbody>
@@ -198,10 +256,27 @@ if ($att_result) {
         </form>
     </div>
 
+    <!-- Hidden delete form -->
+    <form id="delete-form" method="post" action="course_students.php?course_id=<?= $course_id ?>">
+        <input type="hidden" name="delete_student_id" id="delete-student-id">
+        <input type="hidden" name="delete_student">
+    </form>
+
     <script>
     <?php if ($error): ?>
     document.getElementById('add-student-form').classList.remove('hidden');
     <?php endif; ?>
+
+    function toggleEdit(sid) {
+        document.getElementById('edit-row-' + sid).classList.toggle('hidden');
+    }
+
+    function deleteStudent(sid, name) {
+        if (confirm('Remove ' + name + ' from this course?')) {
+            document.getElementById('delete-student-id').value = sid;
+            document.getElementById('delete-form').submit();
+        }
+    }
     </script>
 </body>
 </html>
