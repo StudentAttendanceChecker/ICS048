@@ -18,9 +18,10 @@ if (isset($_POST['add_course'])) {
     $year_level = $suffix . " Year";
     $section = "Section " . strtoupper($_POST['section']);
     $subject = $_POST['subject'];
+$user_id = $_SESSION['user_id'];
 
-    $conn->query("INSERT INTO courses (room, year_level, section, subject) 
-                  VALUES ('$room', '$year_level', '$section', '$subject')");
+$conn->query("INSERT INTO courses (room, year_level, section, subject, user_id) 
+              VALUES ('$room', '$year_level', '$section', '$subject', '$user_id')");
 
     header("Location: user_page.php");
     exit();

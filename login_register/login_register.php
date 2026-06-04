@@ -31,6 +31,7 @@ if (isset($_POST['login'])) {
         if (password_verify($password, $user['password'])) {
             $_SESSION['name'] = $user['name'];
             $_SESSION['email'] = $user['email'];
+             $_SESSION['user_id'] = $user['id'];
 
     
             header("Location: user_page.php");
@@ -40,6 +41,7 @@ if (isset($_POST['login'])) {
 
     $_SESSION['login_error'] = 'Incorrect email or password';
     $_SESSION['active_form'] = 'login';
+   
     header("Location: index.php");
     exit();
 }

@@ -12,7 +12,8 @@ if (!$id) {
     exit();
 }
 
-$conn->query("DELETE FROM courses WHERE id = $id");
+$user_id = $_SESSION['user_id'];
+$conn->query("DELETE FROM courses WHERE id = $id AND user_id = $user_id");
 header("Location: user_page.php");
 exit();
 ?>

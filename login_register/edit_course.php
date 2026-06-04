@@ -12,8 +12,13 @@ if (!$id) {
     exit();
 }
 
-$result = $conn->query("SELECT * FROM courses WHERE id = $id");
+$user_id = $_SESSION['user_id'];
+$result = $conn->query("SELECT * FROM courses WHERE id = $id AND user_id = $user_id");
 $course = $result->fetch_assoc();
+if (!$course) {
+    header("Location: user_page.php");
+    exit();
+}
 
 if (isset($_POST['edit_course'])) {
     $room = "Room " . $_POST['room'];

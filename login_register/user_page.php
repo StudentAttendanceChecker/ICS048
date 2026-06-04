@@ -6,7 +6,8 @@ if (!isset($_SESSION['email'])){
 }
 require_once 'config.php';
 
-$courses = $conn->query("SELECT * FROM courses");
+$user_id = $_SESSION['user_id'];
+$courses = $conn->query("SELECT * FROM courses WHERE user_id = $user_id");
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +23,7 @@ $courses = $conn->query("SELECT * FROM courses");
     <div class="topbar">
         <div class="topbar-brand">Student Attendance Checker</div>
         <div class="topbar-right">
-            <span>Welcome, <strong><?= $_SESSION['name']; ?></strong></span>
+            <span>Welcome, <strong><?= $_SESSION['name']; ?>!</strong></span>
             <button onclick="window.location.href='logout.php'">Logout</button>
         </div>
     </div>
