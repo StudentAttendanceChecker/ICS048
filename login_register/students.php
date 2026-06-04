@@ -42,8 +42,6 @@ $students = $conn->query("SELECT * FROM students");
                     <tr>
                         <th>Student ID</th>
                         <th>Name</th>
-                        <th>Email</th>
-                        <th>Address</th>
                         <th>Sex</th>
                         <th>Action</th>
                     </tr>
@@ -54,8 +52,6 @@ $students = $conn->query("SELECT * FROM students");
                         <tr>
                             <td><?= $student['student_id']; ?></td>
                             <td><?= $student['name']; ?></td>
-                            <td><?= $student['email']; ?></td>
-                            <td><?= $student['address']; ?></td>
                             <td><?= $student['sex']; ?></td>
                             <td>
                                 <button class="btn-edit-sm" onclick="window.location.href='edit_student.php?id=<?= $student['student_id']; ?>'">Edit</button>

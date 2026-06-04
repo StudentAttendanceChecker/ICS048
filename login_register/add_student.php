@@ -13,8 +13,6 @@ if (isset($_POST['add_student'])) {
     $first_name = trim($_POST['first_name']);
     $last_name  = trim($_POST['last_name']);
     $name       = $last_name . ', ' . $first_name;
-    $email      = trim($_POST['email']);
-    $address    = trim($_POST['address']);
     $sex        = $_POST['sex'];
     $course_id  = $_POST['course_id'];
 
@@ -22,8 +20,8 @@ if (isset($_POST['add_student'])) {
     if ($check->num_rows > 0) {
         $error = 'Student ID already exists!';
     } else {
-        $conn->query("INSERT INTO students (student_id, name, email, address, sex) 
-                      VALUES ('$student_id', '$name', '$email', '$address', '$sex')");
+        $conn->query("INSERT INTO students (student_id, name, sex) 
+                      VALUES ('$student_id', '$name', '$sex')");
         $conn->query("INSERT INTO student_courses (student_id, course_id) 
                       VALUES ('$student_id', '$course_id')");
         header("Location: students.php");
@@ -68,13 +66,7 @@ $courses = $conn->query("SELECT * FROM courses ORDER BY subject ASC");
                 <label>Last Name</label>
                 <input type="text" name="last_name" placeholder="e.g. Dela Cruz" required>
 
-                <label>Email</label>
-                <input type="email" name="email" placeholder="e.g. juan@email.com">
-
-                <label>Address</label>
-                <input type="text" name="address" placeholder="e.g. Cagayan de Oro City">
-
-                <label>Sex</label>
+               <label>Sex</label>
                 <select name="sex" required>
                     <option value="" disabled selected>Select sex</option>
                     <option value="Male">Male</option>
