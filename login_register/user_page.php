@@ -45,20 +45,20 @@ $courses = $conn->query("SELECT * FROM courses");
                         <span class="room-tag"><?= $course['room']; ?></span>
                         <span class="student-count">
                             <?php
-                                $cid = $course['id'];
-                                $count = $conn->query("SELECT COUNT(*) as total FROM students WHERE course_id = $cid");
-                                $row = $count->fetch_assoc();
+                                $cid   = $course['id'];
+                                $count = $conn->query("SELECT COUNT(*) as total FROM student_courses WHERE course_id = $cid");
+                                $row   = $count->fetch_assoc();
                                 echo $row['total'];
                             ?> Students
                         </span>
                     </div>
                     <h3><?= $course['subject']; ?></h3>
                     <p><?= $course['year_level']; ?> - <?= $course['section']; ?></p>
-               <div class="card-actions">
-    <button class="btn-start" onclick="window.location.href='attendance.php?course_id=<?= $course['id']; ?>'">Start Attendance</button>
-    <button class="btn-edit" onclick="window.location.href='edit_course.php?id=<?= $course['id']; ?>'">Edit</button>
-</div>
-        </div>
+                    <div class="card-actions">
+                        <button class="btn-start" onclick="window.location.href='course_students.php?course_id=<?= $course['id']; ?>'">Check Attendance</button>
+                        <button class="btn-edit" onclick="window.location.href='edit_course.php?id=<?= $course['id']; ?>'">Edit</button>
+                    </div>
+                </div>
                 <?php endwhile; ?>
             <?php else: ?>
                 <p class="no-courses">No courses yet. Click "Add Course" to get started!</p>
@@ -67,11 +67,11 @@ $courses = $conn->query("SELECT * FROM courses");
 
     </div>
     <script>
-function confirmDelete(id) {
-    if (confirm("Are you sure you want to delete this course?")) {
-        window.location.href = 'delete_course.php?id=' + id;
+    function confirmDelete(id) {
+        if (confirm("Are you sure you want to delete this course?")) {
+            window.location.href = 'delete_course.php?id=' + id;
+        }
     }
-}
-</script>
+    </script>
 </body>
 </html>
