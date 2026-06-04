@@ -4,6 +4,9 @@ if (!isset($_SESSION['email'])){
     header("Location: index.php");
     exit();
 }
+require_once 'config.php';
+
+$courses = $conn->query("SELECT * FROM courses");
 ?>
 
 <!DOCTYPE html>
@@ -11,35 +14,64 @@ if (!isset($_SESSION['email'])){
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Page</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="dashboard">
+
     <div class="topbar">
-        <h1>Welcome, Teacher<span><?= $_SESSION['name']; ?>!</span></h1>
-        <button onclick="window.location.href='logout.php'">Logout</button>
+        <div class="topbar-brand">Student Attendance Checker</div>
+        <div class="topbar-right">
+            <span>Welcome, <strong><?= $_SESSION['name']; ?></strong></span>
+            <button onclick="window.location.href='logout.php'">Logout</button>
+        </div>
     </div>
 
     <div class="content">
-        <h2>List of Clients</h2>
-        <button class="new-client-btn">New Client</button>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Your PHP rows will go here -->
-            </tbody>
-        </table>
+        <div class="add-course-bar">
+            <button class="btn-add-course" onclick="window.location.href='add_course.php'">+ Add Course</button>
+        </div>
+
+        <div class="section-header">
+            <h2>Your Courses</h2>
+        </div>
+
+        <div class="card-grid">
+            <?php if ($courses->num_rows > 0): ?>
+                <?php while ($course = $courses->fetch_assoc()): ?>
+                <div class="card">
+                    <div class="card-top">
+                        <span class="room-tag"><?= $course['room']; ?></span>
+                        <span class="student-count">
+                            <?php
+                                $cid = $course['id'];
+                                $count = $conn->query("SELECT COUNT(*) as total FROM students WHERE course_id = $cid");
+                                $row = $count->fetch_assoc();
+                                echo $row['total'];
+                            ?> Students
+                        </span>
+                    </div>
+                    <h3><?= $course['subject']; ?></h3>
+                    <p><?= $course['year_level']; ?> - <?= $course['section']; ?></p>
+               <div class="card-actions">
+    <button class="btn-start" onclick="window.location.href='attendance.php?course_id=<?= $course['id']; ?>'">Start Attendance</button>
+    <button class="btn-edit" onclick="window.location.href='edit_course.php?id=<?= $course['id']; ?>'">Edit</button>
+</div>
+        </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p class="no-courses">No courses yet. Click "Add Course" to get started!</p>
+            <?php endif; ?>
+        </div>
+
     </div>
+    <script>
+function confirmDelete(id) {
+    if (confirm("Are you sure you want to delete this course?")) {
+        window.location.href = 'delete_course.php?id=' + id;
+    }
+}
+</script>
 </body>
 </html>

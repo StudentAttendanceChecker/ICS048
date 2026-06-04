@@ -16,10 +16,10 @@ body {
     color: #333;
 }
 
-/* This must come AFTER body */
 body.dashboard {
     display: block;
     background: #f4f4f4;
+    min-height: 100vh;
 }
 
 .container{
@@ -47,7 +47,7 @@ h2 {
 }
 
 input {
-    width: 100% ;
+    width: 100%;
     padding: 12px;
     background: #eee;
     border-radius: 6px;
@@ -86,11 +86,12 @@ p a {
     color: #7494ec;
     text-decoration: none;
 }
- p a:hover {
-    text-decoration: underline;
- }
 
- .error-message {
+p a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
     padding: 12px;
     background: #f8d7da;
     border-radius: 6px;
@@ -98,8 +99,11 @@ p a {
     color: #a42834;
     text-align: center;
     margin-bottom: 20px;
- }
+}
 
+/* =====================
+   DASHBOARD STYLES
+   ===================== */
 
 .topbar {
     display: flex;
@@ -110,71 +114,214 @@ p a {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.topbar h1 {
-    font-size: 24px;
+.topbar-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
 }
 
-.topbar button {
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-right span {
+    font-size: 14px;
+    color: #555;
+}
+
+.topbar-right button {
     width: auto;
-    padding: 10px 24px;
+    padding: 8px 20px;
     margin: 0;
+    font-size: 14px;
 }
 
 .content {
     padding: 30px;
 }
 
-.content h2 {
-    font-size: 26px;
-    margin-bottom: 14px;
-    text-align: left;
-}
-
-.new-client-btn {
-    width: auto;
-    padding: 10px 20px;
+.add-course-bar {
+    display: flex;
+    justify-content: flex-end;
     margin-bottom: 20px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 0 8px rgba(0,0,0,0.08);
-}
-
-thead {
-    background: #f0f0f0;
-}
-
-th, td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+.btn-add-course {
+    width: auto;
+    padding: 10px 20px;
+    margin: 0;
+    background: #4361ee;
     font-size: 14px;
 }
 
-.btn-edit {
-    background: #7494ec;
+.btn-add-course:hover {
+    background: #3451d1;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    text-align: left;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.room-tag {
+    background: #f0f0f0;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #555;
+}
+
+.student-count {
+    font-size: 12px;
+    color: #777;
+}
+
+.card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+.card p {
+    font-size: 13px;
+    color: #777;
+    text-align: left;
+    margin: 0;
+}
+
+.card-actions {
+    margin-top: 12px;
+}
+
+.btn-start {
+    width: 100%;
+    padding: 10px;
+    background: #4361ee;
     color: #fff;
-    padding: 6px 14px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 14px;
     cursor: pointer;
-    margin-right: 4px;
-    width: auto;
-    margin-bottom: 0;
+    font-weight: 500;
+    margin: 0;
+    transition: 0.3s;
+}
+
+.btn-start:hover {
+    background: #3451d1;
+}
+
+.no-courses {
+    color: #888;
+    font-size: 14px;
+    text-align: left;
+}
+/* Form Card */
+.form-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.form-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-card label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions button {
+    margin: 0;
+}
+
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-cancel:hover {
+    background: #cacaca;
+}
+.btn-edit {
+    width: 100%;
+    padding: 10px;
+    background: #f0f0f0;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 6px 0 0 0;
+    transition: 0.3s;
+}
+
+.btn-edit:hover {
+    background: #e0e0e0;
 }
 
 .btn-delete {
+    width: 100%;
+    padding: 10px;
     background: #e74c3c;
     color: #fff;
-    padding: 6px 14px;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
+    font-size: 14px;
     cursor: pointer;
-    width: auto;
-    margin-bottom: 0;
+    font-weight: 500;
+    margin: 6px 0 0 0;
+    transition: 0.3s;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
 }
