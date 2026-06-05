@@ -18,6 +18,7 @@ if (isset($_POST['add_course'])) {
     $year_level = $suffix . " Year";
     $section = "Section " . strtoupper($_POST['section']);
     $subject = $_POST['subject'];
+    //mag insert ug new course and ilink sa logged in teacher via user_id
 $user_id = $_SESSION['user_id'];
 
 $conn->query("INSERT INTO courses (room, year_level, section, subject, user_id) 

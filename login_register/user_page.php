@@ -5,7 +5,7 @@ if (!isset($_SESSION['email'])){
     exit();
 }
 require_once 'config.php';
-
+//fetch only the courses that belong to the logged in teacher 
 $user_id = $_SESSION['user_id'];
 $courses = $conn->query("SELECT * FROM courses WHERE user_id = $user_id");
 ?>
@@ -47,6 +47,7 @@ $courses = $conn->query("SELECT * FROM courses WHERE user_id = $user_id");
                         <span class="student-count">
                             <?php
                                 $cid   = $course['id'];
+                                //dire gina count pila ka students ang enrolled in each course
                                 $count = $conn->query("SELECT COUNT(*) as total FROM student_courses WHERE course_id = $cid");
                                 $row   = $count->fetch_assoc();
                                 echo $row['total'];

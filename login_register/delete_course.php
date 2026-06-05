@@ -12,6 +12,7 @@ if (!$id) {
     exit();
 }
 
+//delete the course only if it belongs to the logged in teacher
 $user_id = $_SESSION['user_id'];
 $conn->query("DELETE FROM courses WHERE id = $id AND user_id = $user_id");
 header("Location: user_page.php");

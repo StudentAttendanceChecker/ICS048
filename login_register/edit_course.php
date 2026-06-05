@@ -12,6 +12,7 @@ if (!$id) {
     exit();
 }
 
+//fetch the course only if it belongs to the logged-in teacher
 $user_id = $_SESSION['user_id'];
 $result = $conn->query("SELECT * FROM courses WHERE id = $id AND user_id = $user_id");
 $course = $result->fetch_assoc();
@@ -33,6 +34,7 @@ if (isset($_POST['edit_course'])) {
     $section = "Section " . strtoupper($_POST['section']);
     $subject = $_POST['subject'];
 
+//update the course details para sa specific course
     $conn->query("UPDATE courses SET room='$room', year_level='$year_level', section='$section', subject='$subject' WHERE id=$id");
 
     header("Location: user_page.php");

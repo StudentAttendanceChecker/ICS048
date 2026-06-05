@@ -12,6 +12,7 @@ if (!$course_id) {
     exit();
 }
 
+//dire gina verify if ang course ga exist and ga belong ba siya sa logged in teacher
 $user_id = $_SESSION['user_id'];
 $course = $conn->query("SELECT * FROM courses WHERE id = $course_id AND user_id = $user_id")->fetch_assoc();
 if (!$course) {
@@ -28,6 +29,8 @@ if (isset($_POST['update_student'])) {
     $fname = $conn->real_escape_string(trim($_POST['edit_first_name']));
     $lname = $conn->real_escape_string(trim($_POST['edit_last_name']));
     $sex   = $conn->real_escape_string($_POST['edit_sex']);
+
+    //updates student info
     $conn->query("UPDATE students SET first_name='$fname', last_name='$lname', sex='$sex' WHERE student_id='$sid'");
     header("Location: course_students.php?course_id=$course_id");
     exit();
@@ -36,14 +39,14 @@ if (isset($_POST['update_student'])) {
 if (isset($_POST['delete_student'])) {
     $sid = $conn->real_escape_string(trim($_POST['delete_student_id']));
     
-    // Remove from this course
+    // remove student from this course
     $conn->query("DELETE FROM student_courses WHERE student_id='$sid' AND course_id=$course_id");
     $conn->query("DELETE FROM attendance WHERE student_id='$sid' AND course_id=$course_id");
 
-    // Check if student is still enrolled in any other course
+    // check if student is still enrolled in any other course
     $still_enrolled = $conn->query("SELECT * FROM student_courses WHERE student_id='$sid'");
     if ($still_enrolled->num_rows === 0) {
-        // Not enrolled anywhere else, delete from students table too
+        // if student not enrolled anywhere else, delete from students table too meow
         $conn->query("DELETE FROM students WHERE student_id='$sid'");
     }
 
@@ -57,11 +60,14 @@ if (isset($_POST['add_student'])) {
     $lname = $conn->real_escape_string(trim($_POST['last_name']));
     $sex   = $conn->real_escape_string($_POST['sex']);
 
+    //check if student id already exists b4 adding 
     $check = $conn->query("SELECT student_id FROM students WHERE student_id = '$sid'");
     if ($check->num_rows > 0) {
         $error = 'Student ID already exists!';
     } else {
+        //insert new student into students table 
         $conn->query("INSERT INTO students (student_id, first_name, last_name, sex) VALUES ('$sid', '$fname', '$lname', '$sex')");
+        //ennroll student sa course
         $conn->query("INSERT INTO student_courses (student_id, course_id) VALUES ('$sid', '$course_id')");
     }
 }
@@ -72,10 +78,13 @@ if (isset($_POST['save_attendance'])) {
     foreach ($statuses as $sid => $status) {
         $sid    = $conn->real_escape_string($sid);
         $status = $conn->real_escape_string($status);
+        //checks if attendance record exist for this students ani nga date
         $exists = $conn->query("SELECT student_id FROM attendance WHERE course_id=$course_id AND student_id='$sid' AND date='$date'");
         if ($exists->num_rows > 0) {
+            //update existing attendance record 
             $conn->query("UPDATE attendance SET status='$status' WHERE course_id=$course_id AND student_id='$sid' AND date='$date'");
         } else {
+            //insert new attendance record for this student
             $conn->query("INSERT INTO attendance (course_id, student_id, date, status) VALUES ($course_id, '$sid', '$date', '$status')");
         }
     }
@@ -83,6 +92,7 @@ if (isset($_POST['save_attendance'])) {
 }
 
 $selected_date = $_POST['date'] ?? $_GET['date'] ?? $today;
+
 
 $students = $conn->query("SELECT s.* FROM students s 
     INNER JOIN student_courses sc ON s.student_id = sc.student_id 

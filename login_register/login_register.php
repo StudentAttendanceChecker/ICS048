@@ -8,11 +8,13 @@ if (isset($_POST['register'])){
     $email= $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
    
+    //Checks kung ang email is already registered para pud ma avoid ang duplication
     $checkEmail = $conn->query("SELECT email FROM users WHERE email = '$email'");
     if ($checkEmail->num_rows > 0) {
         $_SESSION['register_error'] = 'Email is already registered!';
         $_SESSION['active_form'] = 'register';
     } else {
+        //insert new teacher acc sa users table
         $conn->query("INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')");
     }
 
@@ -20,7 +22,7 @@ if (isset($_POST['register'])){
     exit();
 } 
 
-
+    //fetch user record matching the entered email
 if (isset($_POST['login'])) {
      $email= $_POST['email'];
      $password = $_POST['password'];
